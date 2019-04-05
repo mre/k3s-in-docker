@@ -76,11 +76,7 @@ fn main() {
             if subm.is_present("timeout") {
                 timeout = subm.value_of("timeout").unwrap().parse::<u64>().unwrap();
             }
-            let volume = match subm.is_present("volume") {
-                true => subm.value_of("volume"),
-                false => None
-            };
-            cluster::create_cluster(subm.value_of("name").unwrap(), subm.value_of("port").unwrap(), subm.is_present("wait"), timeout, volume);
+            cluster::create_cluster(subm.value_of("name").unwrap(), subm.value_of("port").unwrap(), subm.is_present("wait"), timeout, subm.value_of("volume"));
             println!("Created cluster");
         },
         ("delete", Some(subm)) => {
