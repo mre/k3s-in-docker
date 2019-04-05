@@ -4,14 +4,18 @@ mod data;
 use std::process::{self, Command};
 use std::{thread, time};
 
-pub fn create_cluster(name: &str, port: &str, wait: bool, timeout: u64) {
+pub fn create_cluster(name: &str, port: &str, wait: bool, timeout: u64, volume: Option<&str>) {
     let port_format = format!("{port}:{port}", port=port);
-    let k3_arg = ["run", "--name", name,
+    let mut k3_arg = vec!["run", "--name", name,
                     "-e", "K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml", 
                     "--publish", port_format.as_str(),
                     "--privileged", "-d", 
                     "rancher/k3s:v0.1.0", 
                     "server",  "--https-listen-port", port];
+
+    if volume.is_some() {
+        k3_arg.append(&mut vec!["--volume", volume.unwrap()]);
+    };
     let mut command = Command::new("docker");
     
     println!("Creating cluster {}", name);

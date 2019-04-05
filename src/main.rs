@@ -23,6 +23,10 @@ fn main() {
                             .long("port")
                             .default_value("6443")
                             .help("provide a different port for cluster"))
+                    .arg(Arg::with_name("volume")
+                            .short("v")
+                            .long("volume")
+                            .help("mount volume"))
                     .arg(Arg::from_usage("-w --wait 'wait for the cluster to start'"))
                     .arg(Arg::with_name("timeout")
                             .long("timeout")
@@ -72,7 +76,11 @@ fn main() {
             if subm.is_present("timeout") {
                 timeout = subm.value_of("timeout").unwrap().parse::<u64>().unwrap();
             }
-            cluster::create_cluster(subm.value_of("name").unwrap(), subm.value_of("port").unwrap(), subm.is_present("wait"), timeout);
+            let volume = match subm.is_present("volume") {
+                true => subm.value_of("volume"),
+                false => None
+            };
+            cluster::create_cluster(subm.value_of("name").unwrap(), subm.value_of("port").unwrap(), subm.is_present("wait"), timeout, volume);
             println!("Created cluster");
         },
         ("delete", Some(subm)) => {
